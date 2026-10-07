@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GPS Smart Parking</title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        #map {
+            width: 100%;
+            height: 70vh;
+        }
+
+        .top-panel {
+            padding: 10px;
+            background: white;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #eeeeee;
+        }
+
+        #parkingList {
+            padding: 10px;
+            background: #f5f5f5;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        #loginModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            width: 320px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        #adminPanel {
+            display: none;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="top-panel">
+
+        <div class="search-box">
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Joy yoki manzil qidiring..."
+            >
+
+            <button id="searchButton">
+                Qidirish
+            </button>
+        </div>
+
+        <button id="gpsButton">
+            GPS
+        </button>
+
+        <button id="adminLoginButton">
+            Admin kirish
+        </button>
+
+    </div>
+
+
+    <div id="adminPanel">
+
+        <button id="startDrawingButton">
+            Parking chizish
+        </button>
+
+        <button id="finishDrawingButton">
+            Chizishni tugatish
+        </button>
+
+        <button id="clearDrawingButton">
+            Tozalash
+        </button>
+
+        <button id="deleteParkingButton">
+            Parkingni o‘chirish
+        </button>
+
+        <button id="logoutButton">
+            Chiqish
+        </button>
+
+    </div>
+
+
+    <div id="map"></div>
+
+
+    <div>
+        <h3 style="padding-left:10px;">
+            Yaqin parkinglar
+        </h3>
+
+        <div id="parkingList">
+            <p>GPS orqali parkinglarni topishingiz mumkin.</p>
+        </div>
+    </div>
+
+
+    <div id="loginModal">
+
+        <div class="login-box">
+
+            <h3>Admin kirish</h3>
+
+            <input
+                id="adminPassword"
+                type="password"
+                placeholder="Admin paroli"
+            >
+
+            <div>
+
+                <button id="loginButton">
+                    Kirish
+                </button>
+
+                <button id="cancelLoginButton">
+                    Bekor qilish
+                </button>
+
+            </div>
+
+            <p id="loginMessage"></p>
+
+        </div>
+
+    </div>
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="./parking.js"></script>
+
+    <script src="./admin.js"></script>
+
+</body>
+</html>
