@@ -3,14 +3,14 @@ import urllib.request
 import urllib.parse
 import json
 import math
+import os
 
-PORT = 8000
+# Render PORT beradi.
+# Kompyuterda esa 8000 portidan foydalanamiz.
+PORT = int(os.environ.get("PORT", 8000))
 
-# ==========================================
-# ADMIN SOZLAMALARI
-# ==========================================
-
-ADMIN_PASSWORD = "12345"
+# Admin paroli
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "12345")
 
 
 # ==========================================
@@ -85,7 +85,6 @@ class ParkingServer(SimpleHTTPRequestHandler):
                 print("Longitude:", lon)
                 print("================================")
 
-                # 3 km atrofidagi hudud
                 delta = 0.035
 
                 left = lon - delta
@@ -131,7 +130,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
                     headers={
                         "User-Agent":
                         "GPS-Parking/1.0 "
-                        "(local development)"
+                        "(smartparking project)"
                     }
 
                 )
@@ -157,7 +156,6 @@ class ParkingServer(SimpleHTTPRequestHandler):
                     len(results)
                 )
 
-                # Faqat 3 km ichidagi natijalarni qoldirish
                 parking_list = []
 
                 for item in results:
@@ -194,7 +192,6 @@ class ParkingServer(SimpleHTTPRequestHandler):
 
                         continue
 
-                # Eng yaqin parkinglar birinchi
                 parking_list.sort(
                     key=lambda x:
                     x.get(
@@ -225,6 +222,11 @@ class ParkingServer(SimpleHTTPRequestHandler):
                     "*"
                 )
 
+                self.send_header(
+                    "Content-Length",
+                    str(len(result))
+                )
+
                 self.end_headers()
 
                 self.wfile.write(result)
@@ -234,10 +236,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
             except Exception as error:
 
                 print()
-                print(
-                    "PARKING API XATOSI:"
-                )
-
+                print("PARKING API XATOSI:")
                 print(error)
 
                 self.send_json(
@@ -251,7 +250,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
 
 
         # ==============================
-        # ADMIN LOGIN
+        # ADMIN CHECK
         # ==============================
 
         if self.path.startswith(
@@ -268,7 +267,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
             return
 
 
-        # Oddiy fayllar
+        # Oddiy HTML, JS va boshqa fayllar
         return super().do_GET()
 
 
@@ -341,11 +340,9 @@ class ParkingServer(SimpleHTTPRequestHandler):
             return
 
 
-        # Noma'lum POST
         self.send_json(
             {
-                "error":
-                    "Noma'lum API"
+                "error": "Noma'lum API"
             },
             404
         )
@@ -366,9 +363,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
             ensure_ascii=False
         ).encode("utf-8")
 
-        self.send_response(
-            status
-        )
+        self.send_response(status)
 
         self.send_header(
             "Content-Type",
@@ -387,9 +382,7 @@ class ParkingServer(SimpleHTTPRequestHandler):
 
         self.end_headers()
 
-        self.wfile.write(
-            result
-        )
+        self.wfile.write(result)
 
 
 # ==========================================
@@ -401,26 +394,27 @@ print("========================================")
 print("          GPS PARKING SERVER")
 print("========================================")
 print()
-print("Sayt manzili:")
-print(
-    "http://localhost:8000/parking.html"
-)
-print()
-print("Admin paroli:")
-print(
-    ADMIN_PASSWORD
-)
+
+if os.environ.get("RENDER"):
+    print("Render server ishga tushmoqda...")
+    print("PORT:", PORT)
+else:
+    print("Sayt manzili:")
+    print(
+        "http://localhost:" +
+        str(PORT) +
+        "/parking.html"
+    )
+
 print()
 print("Server ishlayapti...")
 print()
-print(
-    "To'xtatish uchun CTRL + C bosing."
-)
+print("To'xtatish uchun CTRL + C bosing.")
 print()
 
 
 server = HTTPServer(
-    ("localhost", PORT),
+    ("0.0.0.0", PORT),
     ParkingServer
 )
 
